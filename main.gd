@@ -73,10 +73,15 @@ func get_date_formated(format:String, timestamp:int = 0) -> String:
 		t = t.replace(str(k), str(r[k]))
 	return t
 
-func remove_bb_tags(text:String) -> String:
-	var regex = RegEx.new()
-	regex.compile("\\[.*?\\]")
-	return regex.sub(text, "", true)
+## the godot docs suggest to remove everything in square brackets - that might be a little
+## too much if you have some task that look like "[#12334] ticket something"
+## We keep the user supplied text as-is and just escape square brackets for display purposes
+func escape_bb_tags(text:String) -> String:
+	text = text.replace("[", "@@LEFT_BRACKET@@")
+	text = text.replace("]", "@@RIGHT_BRACKET@@")
+	text = text.replace("@@LEFT_BRACKET@@", "[lb]")
+	text = text.replace("@@RIGHT_BRACKET@@", "[rb]")
+	return text
 
 func wrap_color(text:String, color:String) -> String:
 	return "[color={colorCode}]{text}[/color]".format({"text": text, "colorCode": color})
@@ -126,7 +131,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 	if new_text.is_empty():
 		return
 	lastEntryTimestamp = time()
-	add_timelog_entry(lastEntryTimestamp, remove_bb_tags(new_text))
+	add_timelog_entry(lastEntryTimestamp, new_text)
 	update_current_text()
 	# Look & Feel: Reset time difference immediately
 	timeDiffLabel.text = time_diff(0)
@@ -168,7 +173,7 @@ func load_timelog():
 			#print("error parsing time")
 			continue
 		lastEntryTimestamp = timestamp
-		add_timelog_entry(timestamp, remove_bb_tags(parts[1]))
+		add_timelog_entry(timestamp, parts[1])
 	update_current_text()
 	#timelogPerDay.get_or_add()
 
@@ -195,7 +200,7 @@ func update_current_text():
 			color = pauseColorPicker.color.to_html()
 		else:
 			timeWorked += timediff
-		txt += wrap_color(time_diff(timediff), colorTime) + "\t\t" + wrap_color(entry.text, color) + "\n"
+		txt += wrap_color(time_diff(timediff), colorTime) + "\t\t" + wrap_color(escape_bb_tags(entry.text), color) + "\n"
 	txt += "\n"
 	var workTimeLeft = (dailyWorkingHours.value * 3600) - timeWorked
 	txt += "Time worked: " + wrap_color(time_diff(timeWorked), colorTime) + "\n"
