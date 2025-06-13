@@ -190,6 +190,13 @@ max_value = 60.0
 value = 15.0
 suffix = "minuten"
 
+[node name="DiffSecondsToggle" type="CheckButton" parent="TabContainer/Einstellungen"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+button_pressed = true
+text = "Zeit differenzen mit Sekunden ausgeben"
+
 [node name="HBoxContainer4" type="HBoxContainer" parent="TabContainer/Einstellungen"]
 layout_mode = 2
 
@@ -246,4 +253,5 @@ layout_mode = 2
 [connection signal="text_submitted" from="TabContainer/Eingabe/InputContainer/Input" to="." method="_on_input_text_submitted"]
 [connection signal="value_changed" from="TabContainer/Einstellungen/HBoxContainer/DailyWorkingHours" to="." method="_on_daily_working_hours_value_changed"]
 [connection signal="text_changed" from="TabContainer/Einstellungen/HBoxContainer2/DateFormat" to="." method="_on_date_format_text_changed"]
+[connection signal="toggled" from="TabContainer/Einstellungen/DiffSecondsToggle" to="." method="_on_diff_seconds_toggle_toggled"]
 [connection signal="toggled" from="TabContainer/Einstellungen/TabsMoveable" to="." method="_on_tabs_moveable_toggled"]

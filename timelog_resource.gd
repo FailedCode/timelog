@@ -21,7 +21,7 @@ func _init(tstamp:int = 0, txt:String = "") -> void:
 	self.timestamp = tstamp
 
 func _to_string() -> String:
-	var date = Time.get_datetime_string_from_unix_time(self.timestamp)
+	var date = Time.get_datetime_string_from_unix_time(self.timestamp, true)
 	return "{date}: {text}".format({
 		"date": date,
 		"text": self.text,
