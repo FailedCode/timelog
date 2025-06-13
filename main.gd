@@ -272,6 +272,9 @@ func _on_date_format_text_changed(new_text: String) -> void:
 	dateFormatPreviewLabel.text = get_date_formated(new_text, 1740661545)
 	dateLabel.text = get_date_formated(new_text, currentDateTimestamp)
 
+func _on_open_user_folder_button_pressed() -> void:
+	OS.shell_open(OS.get_user_data_dir())
+
 ## Runs Every Second
 func _on_second_timer_timeout() -> void:
 	if lastEntryTimestamp == 0:

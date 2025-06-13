@@ -248,6 +248,22 @@ text = "Tabs verschiebar machen"
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="HBoxContainer5" type="HBoxContainer" parent="TabContainer/Einstellungen"]
+layout_mode = 2
+
+[node name="LeftPad" type="Control" parent="TabContainer/Einstellungen/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OpenUserFolderButton" type="Button" parent="TabContainer/Einstellungen/HBoxContainer5"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Anwendungsordner öffnen"
+
+[node name="RightPad" type="Control" parent="TabContainer/Einstellungen/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="timeout" from="SecondTimer" to="." method="_on_second_timer_timeout"]
 [connection signal="text_submitted" from="TabContainer/Eingabe/InputContainer/Input" to="." method="_on_input_text_submitted"]
@@ -255,3 +271,4 @@ layout_mode = 2
 [connection signal="text_changed" from="TabContainer/Einstellungen/HBoxContainer2/DateFormat" to="." method="_on_date_format_text_changed"]
 [connection signal="toggled" from="TabContainer/Einstellungen/DiffSecondsToggle" to="." method="_on_diff_seconds_toggle_toggled"]
 [connection signal="toggled" from="TabContainer/Einstellungen/TabsMoveable" to="." method="_on_tabs_moveable_toggled"]
+[connection signal="pressed" from="TabContainer/Einstellungen/HBoxContainer5/OpenUserFolderButton" to="." method="_on_open_user_folder_button_pressed"]
