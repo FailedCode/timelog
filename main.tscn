@@ -23,10 +23,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 0
+current_tab = 1
 clip_tabs = false
 
 [node name="Eingabe" type="VBoxContainer" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -91,14 +92,15 @@ size_flags_horizontal = 3
 keep_editing_on_text_submit = true
 
 [node name="Gruppiert" type="VBoxContainer" parent="TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
 [node name="GroupedDay" type="RichTextLabel" parent="TabContainer/Gruppiert"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
+bbcode_enabled = true
 context_menu_enabled = true
 selection_enabled = true
 
@@ -194,7 +196,6 @@ suffix = "minuten"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-button_pressed = true
 text = "Zeit differenzen mit Sekunden ausgeben"
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="TabContainer/Einstellungen"]

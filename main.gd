@@ -4,8 +4,10 @@ extends Control
 const settings_path:String = "user://settings.ini"
 
 ## The file serves as long-time storage
-## TODO: add file selector in settings
-var timelog_path:String = "user://timelog.txt"
+const timelog_path:String = "user://timelog.txt"
+
+## The todo items
+const todo_path:String = "user://todo.txt"
 
 ## In memory representation of the log
 var timelog:Dictionary
@@ -19,6 +21,7 @@ var currentDateTimestamp:int
 @onready var input:LineEdit = %Input
 @onready var timeDiffLabel:Label = %TimeDiffLabel
 @onready var current:RichTextLabel = %CurrentDay
+@onready var grouped:RichTextLabel = %GroupedDay
 @onready var dailyWorkingHoursLabel:Label = %DailyWorkingHoursLabel
 @onready var dailyWorkingHours:Slider = %DailyWorkingHours
 @onready var tabContainer:TabContainer = %TabContainer
@@ -43,12 +46,15 @@ func _ready() -> void:
 	
 	load_timelog()
 	
-	
 	# WIP
 	#var root = todoTree.create_item()
 	#root.set_text(0, "root")
-	#todoTree.create_item(root).set_text(0, "child")
+	#var item = todoTree.create_item(root)
+	#item.set_text(0, "child")
 
+## use a user controlled date format to display a timestamp
+## mostly used for the date selector
+## the timelog file itself uses the ISO 8601 format
 func get_date_formated(format:String, timestamp:int = 0) -> String:
 	var t:String = format.strip_edges()
 	if t.is_empty():
@@ -100,7 +106,7 @@ func load_user_settings():
 	v = config_file.get_value("main", "DateFormat", "")
 	if v != "":
 		dateFormat.text = v
-	diffSecondsToggle.button_pressed = config_file.get_value("main", "DiffSecondsToggle", true)
+	diffSecondsToggle.button_pressed = config_file.get_value("main", "DiffSecondsToggle", false)
 
 func save_user_settings():
 	var config_file := ConfigFile.new()
@@ -132,15 +138,19 @@ func _on_input_text_submitted(new_text: String) -> void:
 		return
 	lastEntryTimestamp = time()
 	add_timelog_entry(lastEntryTimestamp, new_text)
-	update_current_text()
+	save_timelog()
+	update_text_controls()
 	# Look & Feel: Reset time difference immediately
 	timeDiffLabel.text = time_diff(0)
-	#current.append_text("\n" + wrap_color(str(timelog.back()), "#FF00FF"))
 
+## write all timelog Resources back to disk
 func save_timelog():
 	var file = FileAccess.open(self.timelog_path, FileAccess.WRITE)
 	var lines = ""
-	for date in timelog.keys():
+	var timelogKeys = timelog.keys()
+	# dictionary keys are not necassarly in order
+	timelogKeys.sort()
+	for date in timelogKeys:
 		var day = timelog.get(date)
 		for entry in day:
 			lines += str(entry) + "\n"
@@ -148,9 +158,10 @@ func save_timelog():
 	file.store_string(lines)
 	file.close()
 
+## parse into timelog Resources
 func load_timelog():
 	if !FileAccess.file_exists(self.timelog_path):
-		print("load_timelog: No logfile")
+		#print("load_timelog: No logfile")
 		return
 	var file = FileAccess.open(self.timelog_path, FileAccess.READ)
 	var lines = file.get_as_text(true).split("\n", false);
@@ -174,8 +185,14 @@ func load_timelog():
 			continue
 		lastEntryTimestamp = timestamp
 		add_timelog_entry(timestamp, parts[1])
-	update_current_text()
+	update_text_controls()
 	#timelogPerDay.get_or_add()
+
+## Both the text in the main window and the one with the grouped output
+## basically need to be updated at the same time
+func update_text_controls():
+	update_current_text()
+	update_grouped_text()
 
 ## update the main view with all recorded tasks
 func update_current_text():
@@ -207,6 +224,33 @@ func update_current_text():
 	txt += "Time paused: " + wrap_color(time_diff(timePaused), colorTime) + "\n"
 	txt += "Time left: " + wrap_color(time_diff(workTimeLeft), colorTime) + "\n"
 	current.text = txt
+
+func update_grouped_text():
+	var txt:String = ""
+	var timediff = 0
+	var timelast = 0
+	var colorText:String = textColorPicker.color.to_html()
+	var colorTime:String = timeColorPicker.color.to_html()
+	var groupedDict:Dictionary
+	# TODO: use selected day
+	var timelog_today = get_timelog_entries(time())
+	for entry:Timelog in timelog_today:
+		if timelast == 0:
+			timelast = entry.timestamp
+			continue
+		timediff = entry.timestamp - timelast
+		timelast = entry.timestamp
+		if entry.text.contains("**"):
+			continue
+		var group:Array = entry.text.split(": ", false, 1)
+		print(group)
+		var diff:int = groupedDict.get(group[0], 0)
+		groupedDict.set(group[0], diff + timediff)
+	
+	for groupText in groupedDict.keys():
+		var groupdiff:int = groupedDict.get(groupText, 0)
+		txt += wrap_color(time_diff(groupdiff), colorTime) + "\t\t" + wrap_color(escape_bb_tags(groupText), colorText) + "\n"
+	grouped.text = txt
 
 ## How do you know I program PHP?!
 func time() -> int:
@@ -260,7 +304,7 @@ func _on_tabLabel_changed(new_text:String, tab:Node, tabLabel:Node) -> void:
 
 ## settings change
 func _on_diff_seconds_toggle_toggled(_toggled_on: bool) -> void:
-	update_current_text()
+	update_text_controls()
 
 ## settings change
 func _on_tabs_moveable_toggled(toggled_on: bool) -> void:
@@ -272,6 +316,7 @@ func _on_date_format_text_changed(new_text: String) -> void:
 	dateFormatPreviewLabel.text = get_date_formated(new_text, 1740661545)
 	dateLabel.text = get_date_formated(new_text, currentDateTimestamp)
 
+## open "user://" to fiddle with the files by hand
 func _on_open_user_folder_button_pressed() -> void:
 	OS.shell_open(OS.get_user_data_dir())
 
