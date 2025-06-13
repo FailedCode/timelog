@@ -33,10 +33,6 @@ metadata/_tab_index = 0
 [node name="DateContainer" type="HBoxContainer" parent="TabContainer/Eingabe"]
 layout_mode = 2
 
-[node name="LeftSpacer" type="Control" parent="TabContainer/Eingabe/DateContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="DateBackButton" type="Button" parent="TabContainer/Eingabe/DateContainer"]
 layout_mode = 2
 text = "<"
@@ -45,18 +41,25 @@ text = "<"
 layout_mode = 2
 text = ">"
 
+[node name="LeftSpacer" type="Control" parent="TabContainer/Eingabe/DateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="DateLabel" type="Label" parent="TabContainer/Eingabe/DateContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "01.01.2000"
-
-[node name="DateTodayButton" type="Button" parent="TabContainer/Eingabe/DateContainer"]
-layout_mode = 2
-text = "today"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="RightSpacer" type="Control" parent="TabContainer/Eingabe/DateContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="DateTodayButton" type="Button" parent="TabContainer/Eingabe/DateContainer"]
+layout_mode = 2
+text = "today"
 
 [node name="CurrentDay" type="RichTextLabel" parent="TabContainer/Eingabe"]
 unique_name_in_owner = true
