@@ -202,8 +202,7 @@ func update_current_text():
 	var timeWorked = 0
 	var timePaused = 0
 	var colorTime:String = timeColorPicker.color.to_html()
-	# TODO: use selected day
-	var timelog_today = get_timelog_entries(time())
+	var timelog_today = get_timelog_entries(currentDateTimestamp)
 	for entry in timelog_today:
 		if timelast == 0:
 			timelast = entry.timestamp
@@ -232,8 +231,7 @@ func update_grouped_text():
 	var colorText:String = textColorPicker.color.to_html()
 	var colorTime:String = timeColorPicker.color.to_html()
 	var groupedDict:Dictionary
-	# TODO: use selected day
-	var timelog_today = get_timelog_entries(time())
+	var timelog_today = get_timelog_entries(currentDateTimestamp)
 	for entry:Timelog in timelog_today:
 		if timelast == 0:
 			timelast = entry.timestamp
@@ -243,7 +241,6 @@ func update_grouped_text():
 		if entry.text.contains("**"):
 			continue
 		var group:Array = entry.text.split(": ", false, 1)
-		print(group)
 		var diff:int = groupedDict.get(group[0], 0)
 		groupedDict.set(group[0], diff + timediff)
 	
@@ -285,6 +282,23 @@ func add_timelog_entry(tstamp:int, text:String):
 func get_timelog_entries(tstamp:int) -> Array:
 	var key = get_date_string(tstamp)
 	return timelog.get_or_add(key, [])
+
+func _on_date_back_button_pressed() -> void:
+	currentDateTimestamp -= 86400
+	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
+	update_text_controls()
+
+func _on_date_forward_button_pressed() -> void:
+	currentDateTimestamp += 86400
+	if (currentDateTimestamp > time()):
+		currentDateTimestamp = time()
+	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
+	update_text_controls()
+
+func _on_date_today_button_pressed() -> void:
+	currentDateTimestamp = time()
+	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
+	update_text_controls()
 
 ## settings change
 ## if you work for more than 10 hours a day... I don't know what to tell you, but that is too much
