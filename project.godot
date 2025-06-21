@@ -22,6 +22,11 @@ window/size/viewport_height=960
 window/size/extend_to_title=true
 window/stretch/scale=2.0
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://translations/en.po", "res://translations/de.po")
+locale/test="de"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

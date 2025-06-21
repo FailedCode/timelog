@@ -1,0 +1,2 @@
+# Poedit by default generates compiled mo files - we don't need them
+*.mo

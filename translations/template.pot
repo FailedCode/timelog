@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+
+msgid "LANGUAGE_LABEL"
+msgstr ""
+
+msgid "SYSTEM_LANGUAGE"
+msgstr ""
+
+msgid "EN_LANGUAGE"
+msgstr ""
+
+msgid "DE_LANGUAGE"
+msgstr ""
+
+msgid "SUNDAY"
+msgstr ""
+
+msgid "MONDAY"
+msgstr ""
+
+msgid "TUESDAY"
+msgstr ""
+
+msgid "WEDNESDAY"
+msgstr ""
+
+msgid "THURSDAY"
+msgstr ""
+
+msgid "FRIDAY"
+msgstr ""
+
+msgid "SATURDAY"
+msgstr ""

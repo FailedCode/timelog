@@ -18,6 +18,12 @@ var lastEntryTimestamp:int = 0
 ## This tracks wich day is currently selected
 var currentDateTimestamp:int
 
+## store locales with translations for those values
+var languageOptions:Dictionary
+
+## When this is used, it means "use whatever language the system uses"
+const SYSTEM_LANGUAGE = "system"
+
 @onready var input:LineEdit = %Input
 @onready var timeDiffLabel:Label = %TimeDiffLabel
 @onready var current:RichTextLabel = %CurrentDay
@@ -27,6 +33,9 @@ var currentDateTimestamp:int
 @onready var tabContainer:TabContainer = %TabContainer
 @onready var tabLabelContainer:Node = %TabLabelContainer
 @onready var todoTree:Tree = %TodoTree
+
+
+@onready var selectedLanguageButton:OptionButton = %SelectedLanguageButton
 @onready var dateLabel:Label = %DateLabel
 @onready var dateFormat:LineEdit = %DateFormat
 @onready var dateFormatPreviewLabel:Label = %DateFormatPreviewLabel
@@ -37,12 +46,10 @@ var currentDateTimestamp:int
 
 func _ready() -> void:
 	currentDateTimestamp = time()
+	create_language_selection()
 	load_user_settings()
 	create_tab_labels()
-	
-	# after loading settings, make sure signals are fired for consistency
-	dailyWorkingHours.value_changed.emit(dailyWorkingHours.value)
-	dateFormat.text_changed.emit(dateFormat.text)
+	set_translation()
 	
 	load_timelog()
 	
@@ -64,7 +71,7 @@ func get_date_formated(format:String, timestamp:int = 0) -> String:
 		d = Time.get_datetime_dict_from_system()
 	else:
 		d = Time.get_datetime_dict_from_unix_time(timestamp)
-	var wd = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"]
+	var wd = [tr("SUNDAY"), tr("MONDAY"), tr("TUESDAY"), tr("WEDNESDAY"), tr("THURSDAY"), tr("FRIDAY"), tr("SATURDAY")]
 	var r = {
 		"%y": str(d["year"]).substr(2),
 		"%Y": d["year"],
@@ -100,6 +107,7 @@ func load_user_settings():
 		return;
 	# Is there a smarter way to make sure sensible values are set?
 	var v
+	selectedLanguageButton.select(languageOptions.get(config_file.get_value("main", "language", SYSTEM_LANGUAGE)))
 	v = config_file.get_value("main", "DailyWorkingHours", 0)
 	if v > 0:
 		dailyWorkingHours.value = float(v)
@@ -110,6 +118,7 @@ func load_user_settings():
 
 func save_user_settings():
 	var config_file := ConfigFile.new()
+	config_file.set_value("main", "language", languageOptions.get(max(selectedLanguageButton.selected, 0)))
 	config_file.set_value("main", "DailyWorkingHours", dailyWorkingHours.value)
 	config_file.set_value("main", "DateFormat", dateFormat.text)
 	config_file.set_value("main", "DiffSecondsToggle", diffSecondsToggle.button_pressed)
@@ -118,6 +127,26 @@ func save_user_settings():
 	#config_file.set_value("main", "TimeColorPicker", timeColorPicker.text)
 	#config_file.set_value("main", "PauseColorPicker", pauseColorPicker.text)
 	config_file.save(self.settings_path)
+
+## switch the language of the application
+func set_translation(language:String = SYSTEM_LANGUAGE):
+	if language == SYSTEM_LANGUAGE:
+		# if this locale isn't available in the TranslationServer
+		# we will fall back to "en" as set in: internationalization/locale/fallback
+		language = OS.get_locale_language()
+	TranslationServer.set_locale(language)
+	trigger_setting_updates()
+
+## Fill possible language options
+func create_language_selection():
+	var locales:Array = [SYSTEM_LANGUAGE]
+	locales.append_array(TranslationServer.get_loaded_locales())
+	var id:int = 0
+	for locale in locales:
+		languageOptions.set(id, locale) # needed for switching languages
+		languageOptions.set(locale, id) # needed for setting the right ID when loading settings
+		selectedLanguageButton.add_item(tr(locale.to_upper() + "_LANGUAGE"), id)
+		id += 1
 
 ## Helper function to create text input for every Tab
 ## Adds the Tab node to the signal, so one general handler function can be reused
@@ -129,6 +158,12 @@ func create_tab_labels():
 		tabLabel.size_flags_horizontal = Control.SIZE_FILL + Control.SIZE_EXPAND
 		tabLabel.text_changed.connect(_on_tabLabel_changed.bind(tab, tabLabel))
 		tabLabelContainer.add_child(tabLabel)
+
+## After loading or when changing language, there are texts that need
+## to be updated
+func trigger_setting_updates():
+	dailyWorkingHours.value_changed.emit(dailyWorkingHours.value)
+	dateFormat.text_changed.emit(dateFormat.text)
 
 ## Here the actual user input is handled!
 func _on_input_text_submitted(new_text: String) -> void:
@@ -301,6 +336,16 @@ func _on_date_today_button_pressed() -> void:
 	update_text_controls()
 
 ## settings change
+func _on_selected_language_button_item_selected(index: int) -> void:
+	# get the language code from the Dictionary here, so the
+	# text for the button can be translated as well
+	set_translation(languageOptions.get(index, SYSTEM_LANGUAGE))
+	# Update the Text 
+	for i in selectedLanguageButton.item_count:
+		var locale:String = languageOptions.get(i)
+		selectedLanguageButton.set_item_text(i, tr(locale.to_upper() + "_LANGUAGE"))
+
+## settings change
 ## if you work for more than 10 hours a day... I don't know what to tell you, but that is too much
 func _on_daily_working_hours_value_changed(value: float) -> void:
 	dailyWorkingHoursLabel.text = "Tägliche Arbeitszeit: {v} h".format({"v": value})
@@ -344,3 +389,5 @@ func _on_second_timer_timeout() -> void:
 func _on_tree_exiting() -> void:
 	save_user_settings()
 	save_timelog()
+
+	
