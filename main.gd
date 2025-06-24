@@ -24,6 +24,9 @@ var languageOptions:Dictionary
 ## When this is used, it means "use whatever language the system uses"
 const SYSTEM_LANGUAGE = "system"
 
+## currently, the value does not matter
+const AUTO_DAY_START_TEXT = "arrived"
+
 @onready var input:LineEdit = %Input
 @onready var timeDiffLabel:Label = %TimeDiffLabel
 @onready var current:RichTextLabel = %CurrentDay
@@ -52,6 +55,7 @@ func _ready() -> void:
 	set_translation()
 	
 	load_timelog()
+	auto_day_start()
 	
 	# WIP
 	#var root = todoTree.create_item()
@@ -171,10 +175,8 @@ func _on_input_text_submitted(new_text: String) -> void:
 	new_text = new_text.strip_edges()
 	if new_text.is_empty():
 		return
-	lastEntryTimestamp = time()
-	add_timelog_entry(lastEntryTimestamp, new_text)
+	add_timelog_entry_now(new_text)
 	save_timelog()
-	update_text_controls()
 	# Look & Feel: Reset time difference immediately
 	timeDiffLabel.text = time_diff(0)
 
@@ -284,6 +286,13 @@ func update_grouped_text():
 		txt += wrap_color(time_diff(groupdiff), colorTime) + "\t\t" + wrap_color(escape_bb_tags(groupText), colorText) + "\n"
 	grouped.text = txt
 
+## If there is no start entry for today, add one - since opening the app
+## basically always means we want to track this day
+func auto_day_start():
+	var timelog_today = get_timelog_entries(currentDateTimestamp)
+	if timelog_today.is_empty():
+		add_timelog_entry_now(AUTO_DAY_START_TEXT)
+
 ## How do you know I program PHP?!
 func time() -> int:
 	return floor(Time.get_unix_time_from_system())
@@ -311,6 +320,12 @@ func add_timelog_entry(tstamp:int, text:String):
 	var key = get_date_string(tstamp)
 	var day = timelog.get_or_add(key, [])
 	day.append(Timelog.new(tstamp, text))
+
+## Service function
+func add_timelog_entry_now(text:String):
+	lastEntryTimestamp = time()
+	add_timelog_entry(lastEntryTimestamp, text)
+	update_text_controls()
 
 ## based on a time stamp, find entries
 ## TODO: "virtual midnight" would need to implemented here as well
