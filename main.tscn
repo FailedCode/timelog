@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://dh658r8myl8sb"]
+[gd_scene load_steps=5 format=3 uid="uid://dh658r8myl8sb"]
 
 [ext_resource type="Script" uid="uid://bsywyyjbn3xnu" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Texture2D" uid="uid://bw4dmcp41251k" path="res://assets/icons/arrow_left.svg" id="2_h2yge"]
+[ext_resource type="Texture2D" uid="uid://cwlb48sr0ci2v" path="res://assets/icons/arrow_right.svg" id="3_1bvp3"]
+[ext_resource type="Texture2D" uid="uid://c7ss13uxfgfqe" path="res://assets/icons/today.svg" id="4_1bvp3"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -34,12 +37,18 @@ metadata/_tab_index = 0
 layout_mode = 2
 
 [node name="DateBackButton" type="Button" parent="TabContainer/Eingabe/DateContainer"]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
-text = "<"
+icon = ExtResource("2_h2yge")
+icon_alignment = 1
+expand_icon = true
 
 [node name="DateForwardButton" type="Button" parent="TabContainer/Eingabe/DateContainer"]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
-text = ">"
+icon = ExtResource("3_1bvp3")
+icon_alignment = 1
+expand_icon = true
 
 [node name="LeftSpacer" type="Control" parent="TabContainer/Eingabe/DateContainer"]
 layout_mode = 2
@@ -58,8 +67,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="DateTodayButton" type="Button" parent="TabContainer/Eingabe/DateContainer"]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
-text = "today"
+tooltip_text = "TODAY"
+icon = ExtResource("4_1bvp3")
+icon_alignment = 1
+expand_icon = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Eingabe"]
 layout_mode = 2

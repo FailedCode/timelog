@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 8.4666665 8.4666666"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="arrow_right.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#d9d9d9"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="16.408369"
+     inkscape:cx="7.0695631"
+     inkscape:cy="18.770909"
+     inkscape:window-width="1920"
+     inkscape:window-height="1010"
+     inkscape:window-x="1073"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       id="grid1"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="0.99999998"
+       spacingy="0.99999999"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g1"
+       transform="matrix(-1.1466364,0,0,1.1466364,8.4956958,-1.0319513)">
+      <path
+         d="m 6.9719652,7.9815804 c 0,0 -6.46180407,-2.804122 -6.48992259,-2.8522589 -0.0281186,-0.048137 -0.0236757,-0.6358961 0,-0.6889515 C 0.50571843,4.3873146 6.9719652,1.202298 6.9719652,1.202298 v 1.0747645 c 0,0 -5.2032614,2.2598206 -5.1946938,2.4526668 0.00857,0.1928462 5.1946938,2.1770867 5.1946938,2.1770867 z"
+         id="text1"
+         style="font-size:2.76897px;fill:#ffffff;stroke-width:8.67968;stroke-linecap:round;stroke-linejoin:round"
+         aria-label="&lt;"
+         sodipodi:nodetypes="czzcczcc" />
+    </g>
+  </g>
+</svg>
