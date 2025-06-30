@@ -61,6 +61,15 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "today"
 
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Eingabe"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RowContainer" type="VBoxContainer" parent="TabContainer/Eingabe/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="CurrentDay" type="RichTextLabel" parent="TabContainer/Eingabe"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -138,7 +147,6 @@ text = "LANGUAGE_LABEL"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-selected = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Einstellungen"]
 layout_mode = 2

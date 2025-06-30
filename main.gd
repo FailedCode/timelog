@@ -21,6 +21,9 @@ var currentDateTimestamp:int
 ## store locales with translations for those values
 var languageOptions:Dictionary
 
+## Timelog Row
+const sceneRow:PackedScene = preload("res://row.tscn")
+
 ## When this is used, it means "use whatever language the system uses"
 const SYSTEM_LANGUAGE = "system"
 
@@ -31,12 +34,13 @@ const AUTO_DAY_START_TEXT = "arrived"
 @onready var timeDiffLabel:Label = %TimeDiffLabel
 @onready var current:RichTextLabel = %CurrentDay
 @onready var grouped:RichTextLabel = %GroupedDay
+@onready var rowContainer:Node = %RowContainer
 @onready var dailyWorkingHoursLabel:Label = %DailyWorkingHoursLabel
 @onready var dailyWorkingHours:Slider = %DailyWorkingHours
 @onready var tabContainer:TabContainer = %TabContainer
 @onready var tabLabelContainer:Node = %TabLabelContainer
-@onready var todoTree:Tree = %TodoTree
 
+@onready var todoTree:Tree = %TodoTree
 
 @onready var selectedLanguageButton:OptionButton = %SelectedLanguageButton
 @onready var dateLabel:Label = %DateLabel
@@ -228,11 +232,14 @@ func load_timelog():
 ## Both the text in the main window and the one with the grouped output
 ## basically need to be updated at the same time
 func update_text_controls():
-	update_current_text()
-	update_grouped_text()
+	update_current_timelog()
+	update_grouped_timelog()
 
-## update the main view with all recorded tasks
-func update_current_text():
+func update_current_timelog():
+	# empty the container
+	for child in rowContainer.get_children():
+		rowContainer.remove_child(child)
+	
 	var txt:String = ""
 	var timediff = 0
 	var timelast = 0
@@ -243,25 +250,31 @@ func update_current_text():
 	for entry in timelog_today:
 		if timelast == 0:
 			timelast = entry.timestamp
-			#txt += str(entry.text) + "\n"
 			continue
 		timediff = entry.timestamp - timelast
 		timelast = entry.timestamp
-		var color:String = textColorPicker.color.to_html()
+		var colorText:String = textColorPicker.color.to_html()
 		if entry.text.contains("**"):
 			timePaused += timediff
-			color = pauseColorPicker.color.to_html()
+			colorText = pauseColorPicker.color.to_html()
 		else:
 			timeWorked += timediff
-		txt += wrap_color(time_diff(timediff), colorTime) + "\t\t" + wrap_color(escape_bb_tags(entry.text), color) + "\n"
-	txt += "\n"
+		
+		var row = sceneRow.instantiate()
+		rowContainer.add_child(row)
+		row.set_timelog(time_diff(timediff), entry)
+		row.set_colors(colorTime, colorText)
+		row.timelog_changed.connect(update_text_controls)
+	
+	# statistics
 	var workTimeLeft = (dailyWorkingHours.value * 3600) - timeWorked
 	txt += "Time worked: " + wrap_color(time_diff(timeWorked), colorTime) + "\n"
 	txt += "Time paused: " + wrap_color(time_diff(timePaused), colorTime) + "\n"
 	txt += "Time left: " + wrap_color(time_diff(workTimeLeft), colorTime) + "\n"
 	current.text = txt
 
-func update_grouped_text():
+
+func update_grouped_timelog():
 	var txt:String = ""
 	var timediff = 0
 	var timelast = 0
@@ -404,5 +417,3 @@ func _on_second_timer_timeout() -> void:
 func _on_tree_exiting() -> void:
 	save_user_settings()
 	save_timelog()
-
-	
