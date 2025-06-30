@@ -22,7 +22,7 @@ var currentDateTimestamp:int
 var languageOptions:Dictionary
 
 ## Timelog Row
-const sceneRow:PackedScene = preload("res://row.tscn")
+const sceneRow:PackedScene = preload("res://scenes/row.tscn")
 
 ## When this is used, it means "use whatever language the system uses"
 const SYSTEM_LANGUAGE = "system"

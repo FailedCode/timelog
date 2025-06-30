@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://d1fjhxjw7bthm"]
 
-[ext_resource type="Script" uid="uid://hx3gk4uhfasg" path="res://row.gd" id="1_go4wn"]
+[ext_resource type="Script" uid="uid://hx3gk4uhfasg" path="res://scenes/row.gd" id="1_go4wn"]
 [ext_resource type="Texture2D" uid="uid://bdu78ubof30w4" path="res://assets/icons/edit.svg" id="2_rk5gk"]
 
 [node name="Row" type="HBoxContainer"]
