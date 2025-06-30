@@ -46,11 +46,12 @@ func _on_btn_edit_toggled(toggled_on: bool) -> void:
 		textLabel.show()
 		textEdit.hide()
 		var newtext = textEdit.text.strip_edges()
-		if !newtext.is_empty():
+		if !newtext.is_empty() and timelog.text != newtext:
 			textLabel.text = newtext
 			timelog.text = newtext
 			timelog_changed.emit()
 
 ## pressing return stops editing mode
 func _on_text_edit_text_submitted(_new_text: String) -> void:
+	# changing button_pressed will automatically emit a "toggled" singal
 	buttonEdit.button_pressed = false
