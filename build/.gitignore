@@ -1,0 +1,4 @@
+# this folder should only contain build results.
+# these should never be commited.
+*
+!.gitignore

@@ -10,8 +10,9 @@ config_version=5
 
 [application]
 
-config/name="gotdot-timelog"
-config/description="gtimelog reimplementation"
+config/name="Timelog"
+config/description="TimeLog is a simple app for keeping track of time."
+config/version="1.0.0"
 run/main_scene="uid://dh658r8myl8sb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 
