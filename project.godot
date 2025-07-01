@@ -16,6 +16,10 @@ config/version="1.0.0"
 run/main_scene="uid://dh658r8myl8sb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 
+[autoload]
+
+DateTime="*res://autoloads/DateTime.gd"
+
 [display]
 
 window/size/viewport_width=1280

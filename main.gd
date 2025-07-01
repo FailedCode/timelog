@@ -15,10 +15,6 @@ const sceneRow:PackedScene = preload("res://scenes/row.tscn")
 ## currently, the value does not matter
 const AUTO_DAY_START_TEXT = "arrived"
 
-const SECONDS_PER_DAY = 86400
-const SECONDS_PER_HOUR = 3600
-const SECONDS_PER_MINUTE = 60
-
 ## Contains all Application Settings
 var appSettings:AppSettings
 
@@ -60,39 +56,13 @@ var currentDateTimestamp:int
 
 func _ready() -> void:
 	appSettings = AppSettings.new()
-	currentDateTimestamp = time()
+	currentDateTimestamp = DateTime.time()
 	create_language_selection()
 	load_settings()
 	create_tab_labels()
 	load_timelog()
 	auto_day_start()
 
-## use a user controlled date format to display a timestamp
-## mostly used for the date selector
-## the timelog file itself uses the ISO 8601 format
-func get_date_formated(format:String, timestamp:int = 0) -> String:
-	var t:String = format.strip_edges()
-	if t.is_empty():
-		return ""
-	var d:Dictionary
-	if timestamp == 0:
-		d = Time.get_datetime_dict_from_system()
-	else:
-		d = Time.get_datetime_dict_from_unix_time(timestamp)
-	var wd = [tr("SUNDAY"), tr("MONDAY"), tr("TUESDAY"), tr("WEDNESDAY"), tr("THURSDAY"), tr("FRIDAY"), tr("SATURDAY")]
-	var r = {
-		"%y": str(d["year"]).substr(2),
-		"%Y": d["year"],
-		"%m": "%02d"%[ d["month"] ],
-		"%d": "%02d"%[ d["day"] ],
-		"%D": wd[ d["weekday"] ],	
-		"%h": "%02d"%[ d["hour"] ],
-		"%i": "%02d"%[ d["minute"] ],
-		"%s": "%02d"%[ d["second"] ],
-	}
-	for k in r:
-		t = t.replace(str(k), str(r[k]))
-	return t
 
 ## the godot docs suggest to remove everything in square brackets - that might be a little
 ## too much if you have some task that look like "[#12334] ticket something"
@@ -167,7 +137,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 	add_timelog_entry_now(new_text)
 	save_timelog()
 	# Look & Feel: Reset time difference immediately
-	timeDiffLabel.text = time_diff(0)
+	timeDiffLabel.text = DateTime.time_diff(0, appSettings.diffSecondsToggle)
 
 ## write all timelog Resources back to disk
 func save_timelog():
@@ -205,7 +175,7 @@ func load_timelog():
 		# Allow missing seconds
 		if len(parts[0]) == 16:
 			parts[0] += ":00"
-		var timestamp = Time.get_unix_time_from_datetime_string(parts[0])
+		var timestamp = DateTime.iso8601_string_to_timestamp(parts[0])
 		if timestamp == -1:
 			#print("error parsing time")
 			continue
@@ -230,11 +200,13 @@ func update_current_timelog():
 	var timelast = 0
 	var timeWorked = 0
 	var timePaused = 0
+	var timeStarted = 0
 	var colorTime:String = timeColorPicker.color.to_html()
 	var timelog_today = get_timelog_entries(currentDateTimestamp)
 	for entry in timelog_today:
 		if timelast == 0:
 			timelast = entry.timestamp
+			timeStarted = entry.timestamp
 			continue
 		timediff = entry.timestamp - timelast
 		timelast = entry.timestamp
@@ -247,15 +219,18 @@ func update_current_timelog():
 		
 		var row = sceneRow.instantiate()
 		rowContainer.add_child(row)
-		row.set_timelog(time_diff(timediff), entry)
+		row.set_timelog(DateTime.time_diff(timediff, appSettings.diffSecondsToggle), entry)
 		row.set_colors(colorTime, colorText)
 		row.timelog_changed.connect(update_text_controls)
 	
 	# statistics
-	var workTimeLeft = (dailyWorkingHours.value * SECONDS_PER_HOUR) - timeWorked
-	txt += "Time worked: " + wrap_color(time_diff(timeWorked), colorTime) + "\n"
-	txt += "Time paused: " + wrap_color(time_diff(timePaused), colorTime) + "\n"
-	txt += "Time left: " + wrap_color(time_diff(workTimeLeft), colorTime) + "\n"
+	var workTimeLeft = (dailyWorkingHours.value * DateTime.SECONDS_PER_HOUR) - timeWorked
+	var startTime = DateTime.get_date_formated("%h:%i", timeStarted)
+	var stopTime = DateTime.get_date_formated("%h:%i", DateTime.time() + workTimeLeft)
+	txt += "Time worked: " + wrap_color(DateTime.time_diff(timeWorked, appSettings.diffSecondsToggle), colorTime) + " "
+	txt += "Time paused: " + wrap_color(DateTime.time_diff(timePaused, appSettings.diffSecondsToggle), colorTime) + " "
+	txt += "Time left: " + wrap_color(DateTime.time_diff(workTimeLeft, appSettings.diffSecondsToggle), colorTime) + " "
+	txt += "(%s - %s)" % [wrap_color(startTime, colorTime), wrap_color(stopTime, colorTime)]
 	current.text = txt
 
 
@@ -281,7 +256,7 @@ func update_grouped_timelog():
 	
 	for groupText in groupedDict.keys():
 		var groupdiff:int = groupedDict.get(groupText, 0)
-		txt += wrap_color(time_diff(groupdiff), colorTime) + "\t\t" + wrap_color(escape_bb_tags(groupText), colorText) + "\n"
+		txt += wrap_color(DateTime.time_diff(groupdiff, appSettings.diffSecondsToggle), colorTime) + "\t\t" + wrap_color(escape_bb_tags(groupText), colorText) + "\n"
 	grouped.text = txt
 
 ## If there is no start entry for today, add one - since opening the app
@@ -291,61 +266,40 @@ func auto_day_start():
 	if timelog_today.is_empty():
 		add_timelog_entry_now(AUTO_DAY_START_TEXT)
 
-## How do you know I program PHP?!
-func time() -> int:
-	return floor(Time.get_unix_time_from_system())
-
-## hours/minutes elapsed for tasks
-## if statistics for a week are summed up, this may be > 24h
-func time_diff(seconds:int) -> String:
-	var hours:int = floor(seconds / float(SECONDS_PER_HOUR))
-	seconds -= hours * SECONDS_PER_HOUR
-	var minutes:int = floor(seconds / float(SECONDS_PER_MINUTE))
-	if appSettings.diffSecondsToggle:
-		seconds -= minutes * SECONDS_PER_MINUTE
-		return "%02d:%02d:%02d"%[hours, minutes, seconds]
-	return "%02d:%02d"%[hours, minutes]
-
-## Date String like "2025-06-09" used as Dictionary key to seperate days
-## TODO: "virtual midnight" would need to implemented here as well
-func get_date_string(tstamp:int) -> String:
-	var d = Time.get_datetime_dict_from_unix_time(tstamp)
-	return "%04d-%02d-%02d"%[d["year"], d["month"], d["day"]]
-
 ## Every day is a entry in the dictionary timelog
 ## the day is an array of Timelog entries
 func add_timelog_entry(tstamp:int, text:String):
-	var key = get_date_string(tstamp)
+	var key = DateTime.get_date_string(tstamp)
 	var day = timelog.get_or_add(key, [])
 	day.append(Timelog.new(tstamp, text))
 
 ## Service function
 func add_timelog_entry_now(text:String):
-	lastEntryTimestamp = time()
+	lastEntryTimestamp = DateTime.time()
 	add_timelog_entry(lastEntryTimestamp, text)
 	update_text_controls()
 
 ## based on a time stamp, find entries
 ## TODO: "virtual midnight" would need to implemented here as well
 func get_timelog_entries(tstamp:int) -> Array:
-	var key = get_date_string(tstamp)
+	var key = DateTime.get_date_string(tstamp)
 	return timelog.get_or_add(key, [])
 
 func _on_date_back_button_pressed() -> void:
-	currentDateTimestamp -= SECONDS_PER_DAY
-	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
+	currentDateTimestamp -= DateTime.SECONDS_PER_DAY
+	dateLabel.text = DateTime.get_date_formated(dateFormat.text, currentDateTimestamp)
 	update_text_controls()
 
 func _on_date_forward_button_pressed() -> void:
-	currentDateTimestamp += SECONDS_PER_DAY
-	if (currentDateTimestamp > time()):
-		currentDateTimestamp = time()
-	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
+	currentDateTimestamp += DateTime.SECONDS_PER_DAY
+	if (currentDateTimestamp > DateTime.time()):
+		currentDateTimestamp = DateTime.time()
+	dateLabel.text = DateTime.get_date_formated(dateFormat.text, currentDateTimestamp)
 	update_text_controls()
 
 func _on_date_today_button_pressed() -> void:
-	currentDateTimestamp = time()
-	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
+	currentDateTimestamp = DateTime.time()
+	dateLabel.text = DateTime.get_date_formated(dateFormat.text, currentDateTimestamp)
 	update_text_controls()
 
 ## settings change
@@ -391,8 +345,8 @@ func _on_tabs_moveable_toggled(toggled_on: bool) -> void:
 func _on_date_format_text_changed(new_text: String) -> void:
 	appSettings.dateFormat = new_text
 	# Example timestamp: 2025-02-27 14:05:45
-	dateFormatPreviewLabel.text = get_date_formated(new_text, 1740661545)
-	dateLabel.text = get_date_formated(new_text, currentDateTimestamp)
+	dateFormatPreviewLabel.text = DateTime.get_date_formated(new_text, 1740661545)
+	dateLabel.text = DateTime.get_date_formated(new_text, currentDateTimestamp)
 
 ## open "user://" to fiddle with the files by hand
 func _on_open_user_folder_button_pressed() -> void:
@@ -402,7 +356,7 @@ func _on_open_user_folder_button_pressed() -> void:
 func _on_second_timer_timeout() -> void:
 	if lastEntryTimestamp == 0:
 		return
-	timeDiffLabel.text = time_diff(time() - lastEntryTimestamp)
+	timeDiffLabel.text = DateTime.time_diff(DateTime.time() - lastEntryTimestamp, appSettings.diffSecondsToggle)
 
 ## When the application shuts down, we save all data
 func _on_tree_exiting() -> void:

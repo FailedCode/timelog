@@ -85,15 +85,11 @@ size_flags_horizontal = 3
 
 [node name="CurrentDay" type="RichTextLabel" parent="TabContainer/Eingabe"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 2
 bbcode_enabled = true
-text = "[color=orange]0h 25m[/color] task: something
-[color=orange]1h 0m[/color] [color=gray]lunch **[/color]
-[color=orange]1h 0m[/color] [color=gray]away ***[/color]
-
-Work done: [color=orange]0h 25m[/color] ([color=orange]0h 25m[/color] this week, [color=orange]0h 25m[/color] per day)
+text = "Work done: [color=orange]0h 25m[/color] ([color=orange]0h 25m[/color] this week, [color=orange]0h 25m[/color] per day)
 Time left: [color=orange]2h 45m[/color]"
 context_menu_enabled = true
 selection_enabled = true
