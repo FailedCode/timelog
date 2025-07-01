@@ -15,6 +15,9 @@ config/description="TimeLog is a simple app for keeping track of time."
 config/version="1.0.0"
 run/main_scene="uid://dh658r8myl8sb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/show_image=false
+boot_splash/fullsize=false
+config/icon="uid://s4qgny3gb4cp"
 
 [autoload]
 
