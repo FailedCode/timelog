@@ -87,8 +87,15 @@ func load_settings():
 	diffSecondsToggle.button_pressed = appSettings.diffSecondsToggle
 	# apply settings
 	set_translation(appSettings.getLanugageString())
+	if appSettings.window_size != Vector2i(0,0):
+		get_window().size = appSettings.window_size
+	if appSettings.window_position != Vector2i(0,0):
+		get_window().position = appSettings.window_position
 
 func save_settings():
+	# get_window() is not accessible in the settings resource class
+	appSettings.window_size = get_window().size
+	appSettings.window_position = get_window().position
 	appSettings.save_to_file(SETTINGS_PATH)
 
 ## switch the language of the application
