@@ -1,13 +1,26 @@
 extends Control
 
 ## All Settings are stored here:
-const settings_path:String = "user://settings.ini"
+const SETTINGS_PATH:String = "user://settings.ini"
 
 ## The file serves as long-time storage
-const timelog_path:String = "user://timelog.txt"
+const TIMELOG_PATH:String = "user://timelog.txt"
 
 ## The todo items
-const todo_path:String = "user://todo.txt"
+const TODO_PATH:String = "user://todo.txt"
+
+## Timelog Row
+const sceneRow:PackedScene = preload("res://scenes/row.tscn")
+
+## currently, the value does not matter
+const AUTO_DAY_START_TEXT = "arrived"
+
+const SECONDS_PER_DAY = 86400
+const SECONDS_PER_HOUR = 3600
+const SECONDS_PER_MINUTE = 60
+
+## Contains all Application Settings
+var appSettings:AppSettings
 
 ## In memory representation of the log
 var timelog:Dictionary
@@ -18,30 +31,23 @@ var lastEntryTimestamp:int = 0
 ## This tracks wich day is currently selected
 var currentDateTimestamp:int
 
-## store locales with translations for those values
-var languageOptions:Dictionary
-
-## Timelog Row
-const sceneRow:PackedScene = preload("res://scenes/row.tscn")
-
-## When this is used, it means "use whatever language the system uses"
-const SYSTEM_LANGUAGE = "system"
-
-## currently, the value does not matter
-const AUTO_DAY_START_TEXT = "arrived"
-
+# Input Tab
 @onready var input:LineEdit = %Input
 @onready var timeDiffLabel:Label = %TimeDiffLabel
 @onready var current:RichTextLabel = %CurrentDay
-@onready var grouped:RichTextLabel = %GroupedDay
 @onready var rowContainer:Node = %RowContainer
 @onready var dailyWorkingHoursLabel:Label = %DailyWorkingHoursLabel
 @onready var dailyWorkingHours:Slider = %DailyWorkingHours
-@onready var tabContainer:TabContainer = %TabContainer
-@onready var tabLabelContainer:Node = %TabLabelContainer
 
+# Grouped Tab
+@onready var grouped:RichTextLabel = %GroupedDay
+
+# Todo Tab
 @onready var todoTree:Tree = %TodoTree
 
+# Settings Tab
+@onready var tabContainer:TabContainer = %TabContainer
+@onready var tabLabelContainer:Node = %TabLabelContainer
 @onready var selectedLanguageButton:OptionButton = %SelectedLanguageButton
 @onready var dateLabel:Label = %DateLabel
 @onready var dateFormat:LineEdit = %DateFormat
@@ -51,21 +57,15 @@ const AUTO_DAY_START_TEXT = "arrived"
 @onready var timeColorPicker:ColorPickerButton = %TimeColorPicker
 @onready var pauseColorPicker:ColorPickerButton = %PauseColorPicker
 
+
 func _ready() -> void:
+	appSettings = AppSettings.new()
 	currentDateTimestamp = time()
 	create_language_selection()
-	load_user_settings()
+	load_settings()
 	create_tab_labels()
-	set_translation()
-	
 	load_timelog()
 	auto_day_start()
-	
-	# WIP
-	#var root = todoTree.create_item()
-	#root.set_text(0, "root")
-	#var item = todoTree.create_item(root)
-	#item.set_text(0, "child")
 
 ## use a user controlled date format to display a timestamp
 ## mostly used for the date selector
@@ -104,41 +104,26 @@ func escape_bb_tags(text:String) -> String:
 	text = text.replace("@@RIGHT_BRACKET@@", "[rb]")
 	return text
 
+## Add BB color tag around a string
 func wrap_color(text:String, color:String) -> String:
 	return "[color={colorCode}]{text}[/color]".format({"text": text, "colorCode": color})
 
-func load_user_settings():
-	var config_file := ConfigFile.new()
-	var error := config_file.load(self.settings_path)
-	if error:
-		print("load_user_settings ERROR:", error)
-		return;
-	# Is there a smarter way to make sure sensible values are set?
-	var v
-	selectedLanguageButton.select(languageOptions.get(config_file.get_value("main", "language", SYSTEM_LANGUAGE)))
-	v = config_file.get_value("main", "DailyWorkingHours", 0)
-	if v > 0:
-		dailyWorkingHours.value = float(v)
-	v = config_file.get_value("main", "DateFormat", "")
-	if v != "":
-		dateFormat.text = v
-	diffSecondsToggle.button_pressed = config_file.get_value("main", "DiffSecondsToggle", false)
+func load_settings():
+	appSettings.load_from_file(SETTINGS_PATH)
+	# set all UI elments with the loaded data
+	selectedLanguageButton.select(appSettings.language)
+	dailyWorkingHours.value = appSettings.dailyWorkingHours
+	dateFormat.text = appSettings.dateFormat
+	diffSecondsToggle.button_pressed = appSettings.diffSecondsToggle
+	# apply settings
+	set_translation(appSettings.getLanugageString())
 
-func save_user_settings():
-	var config_file := ConfigFile.new()
-	config_file.set_value("main", "language", languageOptions.get(max(selectedLanguageButton.selected, 0)))
-	config_file.set_value("main", "DailyWorkingHours", dailyWorkingHours.value)
-	config_file.set_value("main", "DateFormat", dateFormat.text)
-	config_file.set_value("main", "DiffSecondsToggle", diffSecondsToggle.button_pressed)
-	#config_file.set_value("main", "RoundingMinutes",  roundingMinutes.text)
-	#config_file.set_value("main", "TextColorPicker", textColorPicker.text)
-	#config_file.set_value("main", "TimeColorPicker", timeColorPicker.text)
-	#config_file.set_value("main", "PauseColorPicker", pauseColorPicker.text)
-	config_file.save(self.settings_path)
+func save_settings():
+	appSettings.save_to_file(SETTINGS_PATH)
 
 ## switch the language of the application
-func set_translation(language:String = SYSTEM_LANGUAGE):
-	if language == SYSTEM_LANGUAGE:
+func set_translation(language:String = appSettings.SYSTEM_LANGUAGE):
+	if language == appSettings.SYSTEM_LANGUAGE:
 		# if this locale isn't available in the TranslationServer
 		# we will fall back to "en" as set in: internationalization/locale/fallback
 		language = OS.get_locale_language()
@@ -147,12 +132,12 @@ func set_translation(language:String = SYSTEM_LANGUAGE):
 
 ## Fill possible language options
 func create_language_selection():
-	var locales:Array = [SYSTEM_LANGUAGE]
+	var locales:Array = [appSettings.SYSTEM_LANGUAGE]
 	locales.append_array(TranslationServer.get_loaded_locales())
 	var id:int = 0
 	for locale in locales:
-		languageOptions.set(id, locale) # needed for switching languages
-		languageOptions.set(locale, id) # needed for setting the right ID when loading settings
+		appSettings.languageOptions.set(id, locale) # needed for switching languages
+		appSettings.languageOptions.set(locale, id) # needed for setting the right ID when loading settings
 		selectedLanguageButton.add_item(tr(locale.to_upper() + "_LANGUAGE"), id)
 		id += 1
 
@@ -186,7 +171,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 
 ## write all timelog Resources back to disk
 func save_timelog():
-	var file = FileAccess.open(self.timelog_path, FileAccess.WRITE)
+	var file = FileAccess.open(TIMELOG_PATH, FileAccess.WRITE)
 	var lines = ""
 	var timelogKeys = timelog.keys()
 	# dictionary keys are not necassarly in order
@@ -201,10 +186,10 @@ func save_timelog():
 
 ## parse into timelog Resources
 func load_timelog():
-	if !FileAccess.file_exists(self.timelog_path):
+	if !FileAccess.file_exists(TIMELOG_PATH):
 		#print("load_timelog: No logfile")
 		return
-	var file = FileAccess.open(self.timelog_path, FileAccess.READ)
+	var file = FileAccess.open(TIMELOG_PATH, FileAccess.READ)
 	var lines = file.get_as_text(true).split("\n", false);
 	file.close()
 	for line in lines:
@@ -267,7 +252,7 @@ func update_current_timelog():
 		row.timelog_changed.connect(update_text_controls)
 	
 	# statistics
-	var workTimeLeft = (dailyWorkingHours.value * 3600) - timeWorked
+	var workTimeLeft = (dailyWorkingHours.value * SECONDS_PER_HOUR) - timeWorked
 	txt += "Time worked: " + wrap_color(time_diff(timeWorked), colorTime) + "\n"
 	txt += "Time paused: " + wrap_color(time_diff(timePaused), colorTime) + "\n"
 	txt += "Time left: " + wrap_color(time_diff(workTimeLeft), colorTime) + "\n"
@@ -313,11 +298,11 @@ func time() -> int:
 ## hours/minutes elapsed for tasks
 ## if statistics for a week are summed up, this may be > 24h
 func time_diff(seconds:int) -> String:
-	var hours:int = floor(seconds / 3600.0)
-	seconds -= hours * 3600
-	var minutes:int = floor(seconds / 60.0)
-	seconds -= minutes * 60
-	if diffSecondsToggle.button_pressed:
+	var hours:int = floor(seconds / float(SECONDS_PER_HOUR))
+	seconds -= hours * SECONDS_PER_HOUR
+	var minutes:int = floor(seconds / float(SECONDS_PER_MINUTE))
+	if appSettings.diffSecondsToggle:
+		seconds -= minutes * SECONDS_PER_MINUTE
 		return "%02d:%02d:%02d"%[hours, minutes, seconds]
 	return "%02d:%02d"%[hours, minutes]
 
@@ -347,12 +332,12 @@ func get_timelog_entries(tstamp:int) -> Array:
 	return timelog.get_or_add(key, [])
 
 func _on_date_back_button_pressed() -> void:
-	currentDateTimestamp -= 86400
+	currentDateTimestamp -= SECONDS_PER_DAY
 	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
 	update_text_controls()
 
 func _on_date_forward_button_pressed() -> void:
-	currentDateTimestamp += 86400
+	currentDateTimestamp += SECONDS_PER_DAY
 	if (currentDateTimestamp > time()):
 		currentDateTimestamp = time()
 	dateLabel.text = get_date_formated(dateFormat.text, currentDateTimestamp)
@@ -367,15 +352,17 @@ func _on_date_today_button_pressed() -> void:
 func _on_selected_language_button_item_selected(index: int) -> void:
 	# get the language code from the Dictionary here, so the
 	# text for the button can be translated as well
-	set_translation(languageOptions.get(index, SYSTEM_LANGUAGE))
+	appSettings.language = index
+	set_translation(appSettings.getLanugageString())
 	# Update the Text 
 	for i in selectedLanguageButton.item_count:
-		var locale:String = languageOptions.get(i)
+		var locale:String = appSettings.languageOptions.get(i)
 		selectedLanguageButton.set_item_text(i, tr(locale.to_upper() + "_LANGUAGE"))
 
 ## settings change
 ## if you work for more than 10 hours a day... I don't know what to tell you, but that is too much
 func _on_daily_working_hours_value_changed(value: float) -> void:
+	appSettings.dailyWorkingHours = value
 	dailyWorkingHoursLabel.text = "Tägliche Arbeitszeit: {v} h".format({"v": value})
 	if value > 10:
 		dailyWorkingHours.modulate = Color(0.8, 0, 0)
@@ -388,17 +375,21 @@ func _on_tabLabel_changed(new_text:String, tab:Node, tabLabel:Node) -> void:
 	if new_text.strip_edges().is_empty():
 		new_text = tabLabel.placeholder_text
 	tab.name = new_text
+	# TODO: appSettings.
 
 ## settings change
-func _on_diff_seconds_toggle_toggled(_toggled_on: bool) -> void:
+func _on_diff_seconds_toggle_toggled(toggled_on: bool) -> void:
+	appSettings.diffSecondsToggle = toggled_on
 	update_text_controls()
 
 ## settings change
 func _on_tabs_moveable_toggled(toggled_on: bool) -> void:
+	# TODO: appSettings.
 	tabContainer.drag_to_rearrange_enabled = toggled_on
 
 ## settings change
 func _on_date_format_text_changed(new_text: String) -> void:
+	appSettings.dateFormat = new_text
 	# Example timestamp: 2025-02-27 14:05:45
 	dateFormatPreviewLabel.text = get_date_formated(new_text, 1740661545)
 	dateLabel.text = get_date_formated(new_text, currentDateTimestamp)
@@ -415,5 +406,5 @@ func _on_second_timer_timeout() -> void:
 
 ## When the application shuts down, we save all data
 func _on_tree_exiting() -> void:
-	save_user_settings()
+	save_settings()
 	save_timelog()

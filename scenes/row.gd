@@ -1,4 +1,6 @@
 extends HBoxContainer
+## Display a log entry with elapsed time and text
+## allows to change the text
 
 ## Text updated
 signal timelog_changed
