@@ -17,6 +17,59 @@ msgstr "Language"
 msgid "SYSTEM_LANGUAGE"
 msgstr "System language"
 
+msgid "DAILY_WORKING_HOURS_LABEL"
+msgstr "Daily working hours: {v} h"
+
+msgid "DATE_FORMAT_LABEL"
+msgstr "Date format"
+
+msgid "DATE_FORMAT_TOOLTIP"
+msgstr ""
+"%Y - year four-digit\n"
+"%y - year two-digit\n"
+"%m - month two-digit\n"
+"%d - day two-digit\n"
+"%D - day full name\n"
+"%h - hour two-digit\n"
+"%i - minute two-digit\n"
+"%s - seconds two-digit"
+
+msgid "ROUNDING_LABEL"
+msgstr "Rounding"
+
+msgid "ROUNDING_SUFFIX"
+msgstr "minutes"
+
+msgid "DIFF_SECONDS_TOGGLE"
+msgstr "Output time differences with seconds"
+
+msgid "TEXT_COLOR_PICKER_LABEL"
+msgstr "Text"
+
+msgid "TIME_COLOR_PICKER_LABEL"
+msgstr "Time"
+
+msgid "PAUSE_COLOR_PICKER_LABEL"
+msgstr "Pause"
+
+msgid "TABS_MOVEABLE_TOGGLE"
+msgstr "Make tabs movable"
+
+msgid "TAB_INPUT"
+msgstr "Input"
+
+msgid "TAB_GROUPED"
+msgstr "Grouped"
+
+msgid "TAB_TODO"
+msgstr "ToDo"
+
+msgid "TAB_SETTINGS"
+msgstr "Settings"
+
+msgid "OPEN_USER_FOLDER_BUTTON"
+msgstr "open application folder"
+
 msgid "EN_LANGUAGE"
 msgstr "English"
 
@@ -43,3 +96,15 @@ msgstr "Friday"
 
 msgid "SATURDAY"
 msgstr "Saturday"
+
+msgid "DATE_TODAY_BUTTON_TOOLTIP"
+msgstr "Go to today"
+
+msgid "STAT_TIME_WORKED"
+msgstr "Time worked: "
+
+msgid "STAT_TIME_PAUSED"
+msgstr "Time paused: "
+
+msgid "STAT_TIME_LEFT"
+msgstr "Time left: "

@@ -7,6 +7,51 @@ msgstr ""
 msgid "SYSTEM_LANGUAGE"
 msgstr ""
 
+msgid "DAILY_WORKING_HOURS_LABEL"
+msgstr ""
+
+msgid "DATE_FORMAT_LABEL"
+msgstr ""
+
+msgid "DATE_FORMAT_TOOLTIP"
+msgstr ""
+
+msgid "ROUNDING_LABEL"
+msgstr ""
+
+msgid "ROUNDING_SUFFIX"
+msgstr ""
+
+msgid "DIFF_SECONDS_TOGGLE"
+msgstr ""
+
+msgid "TEXT_COLOR_PICKER_LABEL"
+msgstr ""
+
+msgid "TIME_COLOR_PICKER_LABEL"
+msgstr ""
+
+msgid "PAUSE_COLOR_PICKER_LABEL"
+msgstr ""
+
+msgid "TABS_MOVEABLE_TOGGLE"
+msgstr ""
+
+msgid "TAB_INPUT"
+msgstr ""
+
+msgid "TAB_GROUPED"
+msgstr ""
+
+msgid "TAB_TODO"
+msgstr ""
+
+msgid "TAB_SETTINGS"
+msgstr ""
+
+msgid "OPEN_USER_FOLDER_BUTTON"
+msgstr ""
+
 msgid "EN_LANGUAGE"
 msgstr ""
 
@@ -32,4 +77,16 @@ msgid "FRIDAY"
 msgstr ""
 
 msgid "SATURDAY"
+msgstr ""
+
+msgid "DATE_TODAY_BUTTON_TOOLTIP"
+msgstr ""
+
+msgid "STAT_TIME_WORKED"
+msgstr ""
+
+msgid "STAT_TIME_PAUSED"
+msgstr ""
+
+msgid "STAT_TIME_LEFT"
 msgstr ""

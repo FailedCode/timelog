@@ -234,9 +234,9 @@ func update_current_timelog():
 	var workTimeLeft = (dailyWorkingHours.value * DateTime.SECONDS_PER_HOUR) - timeWorked
 	var startTime = DateTime.get_date_formated("%h:%i", timeStarted)
 	var stopTime = DateTime.get_date_formated("%h:%i", DateTime.time() + workTimeLeft)
-	txt += "Time worked: " + wrap_color(DateTime.time_diff(timeWorked, appSettings.diffSecondsToggle), colorTime) + " "
-	txt += "Time paused: " + wrap_color(DateTime.time_diff(timePaused, appSettings.diffSecondsToggle), colorTime) + " "
-	txt += "Time left: " + wrap_color(DateTime.time_diff(workTimeLeft, appSettings.diffSecondsToggle), colorTime) + " "
+	txt += tr("STAT_TIME_WORKED") + wrap_color(DateTime.time_diff(timeWorked, appSettings.diffSecondsToggle), colorTime) + " "
+	txt += tr("STAT_TIME_PAUSED") + wrap_color(DateTime.time_diff(timePaused, appSettings.diffSecondsToggle), colorTime) + " "
+	txt += tr("STAT_TIME_LEFT") + wrap_color(DateTime.time_diff(workTimeLeft, appSettings.diffSecondsToggle), colorTime) + " "
 	txt += "(%s - %s)" % [wrap_color(startTime, colorTime), wrap_color(stopTime, colorTime)]
 	current.text = txt
 
@@ -324,7 +324,7 @@ func _on_selected_language_button_item_selected(index: int) -> void:
 ## if you work for more than 10 hours a day... I don't know what to tell you, but that is too much
 func _on_daily_working_hours_value_changed(value: float) -> void:
 	appSettings.dailyWorkingHours = value
-	dailyWorkingHoursLabel.text = "Tägliche Arbeitszeit: {v} h".format({"v": value})
+	dailyWorkingHoursLabel.text = tr("DAILY_WORKING_HOURS_LABEL").format({"v": value})
 	if value > 10:
 		dailyWorkingHours.modulate = Color(0.8, 0, 0)
 	else:
