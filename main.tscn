@@ -1,9 +1,28 @@
-[gd_scene load_steps=5 format=3 uid="uid://dh658r8myl8sb"]
+[gd_scene load_steps=7 format=3 uid="uid://dh658r8myl8sb"]
 
 [ext_resource type="Script" uid="uid://bsywyyjbn3xnu" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="Texture2D" uid="uid://bw4dmcp41251k" path="res://assets/icons/arrow_left.svg" id="2_h2yge"]
 [ext_resource type="Texture2D" uid="uid://cwlb48sr0ci2v" path="res://assets/icons/arrow_right.svg" id="3_1bvp3"]
 [ext_resource type="Texture2D" uid="uid://c7ss13uxfgfqe" path="res://assets/icons/today.svg" id="4_1bvp3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1bvp3"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.15, 0.15, 0.15, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.43, 0.417458, 0.3225, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="Theme" id="Theme_lquwl"]
+TooltipPanel/styles/panel = SubResource("StyleBoxFlat_1bvp3")
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -12,6 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = SubResource("Theme_lquwl")
 script = ExtResource("1_ig7tw")
 
 [node name="SecondTimer" type="Timer" parent="."]
