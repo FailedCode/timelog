@@ -279,7 +279,10 @@ func update_grouped_timelog():
 				groupdiff += miniumDiff
 			if groupdiff < miniumDiff:
 				groupdiff = miniumDiff
-		txt += wrap_color(DateTime.time_diff(groupdiff, appSettings.diffSecondsToggle), colorTime) + "\t\t" + wrap_color(escape_bb_tags(groupText), colorText) + "\n"
+		txt += wrap_color(DateTime.time_diff(groupdiff, appSettings.diffSecondsToggle), colorTime) \
+			+ "\t\t" \
+			+ wrap_color(escape_bb_tags(groupText), colorText) \
+			+ "\n"
 	grouped.text = txt
 
 ## If there is no start entry for today, add one - since opening the app
@@ -324,6 +327,19 @@ func _on_date_today_button_pressed() -> void:
 	currentDateTimestamp = DateTime.time()
 	dateLabel.text = DateTime.get_date_formated(dateFormat.text, currentDateTimestamp)
 	update_text_controls()
+
+## Grouped
+func _on_btn_copy_all_pressed() -> void:
+	DisplayServer.clipboard_set(grouped.get_parsed_text())
+
+## Grouped
+## The "\t\t" from update_grouped_timelog isn't great... 
+func _on_btn_copy_text_pressed() -> void:
+	var clipboard_text:String = ""
+	for line in grouped.get_parsed_text().split("\n", false):
+		var parts = line.split("\t\t", false, 2)
+		clipboard_text += parts[1] + "\n"
+	DisplayServer.clipboard_set(clipboard_text)
 
 ## settings change
 func _on_selected_language_button_item_selected(index: int) -> void:

@@ -118,3 +118,9 @@ msgstr "Time paused: "
 
 msgid "STAT_TIME_LEFT"
 msgstr "Time left: "
+
+msgid "GROUP_COPY_TEXT"
+msgstr "Copy Text"
+
+msgid "GROUP_COPY_ALL"
+msgstr "Copy Text and Durations"

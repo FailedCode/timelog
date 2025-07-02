@@ -96,3 +96,9 @@ msgstr ""
 
 msgid "STAT_TIME_LEFT"
 msgstr ""
+
+msgid "GROUP_COPY_TEXT"
+msgstr ""
+
+msgid "GROUP_COPY_ALL"
+msgstr ""

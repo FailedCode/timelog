@@ -26,11 +26,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 3
+current_tab = 0
 clip_tabs = false
 
 [node name="TAB_INPUT" type="VBoxContainer" parent="TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -127,6 +126,26 @@ bbcode_enabled = true
 context_menu_enabled = true
 selection_enabled = true
 
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/TAB_GROUPED"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
+[node name="SpacerLeft" type="Control" parent="TabContainer/TAB_GROUPED/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BtnCopyText" type="Button" parent="TabContainer/TAB_GROUPED/HBoxContainer"]
+layout_mode = 2
+text = "GROUP_COPY_TEXT"
+
+[node name="BtnCopyAll" type="Button" parent="TabContainer/TAB_GROUPED/HBoxContainer"]
+layout_mode = 2
+text = "GROUP_COPY_ALL"
+
+[node name="SpacerRight" type="Control" parent="TabContainer/TAB_GROUPED/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="TAB_TODO" type="VBoxContainer" parent="TabContainer"]
 visible = false
 layout_mode = 2
@@ -143,6 +162,7 @@ size_flags_vertical = 3
 auto_tooltip = false
 
 [node name="TAB_SETTINGS" type="VBoxContainer" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 3
 
@@ -313,6 +333,8 @@ size_flags_horizontal = 3
 [connection signal="pressed" from="TabContainer/TAB_INPUT/DateContainer/DateForwardButton" to="." method="_on_date_forward_button_pressed"]
 [connection signal="pressed" from="TabContainer/TAB_INPUT/DateContainer/DateTodayButton" to="." method="_on_date_today_button_pressed"]
 [connection signal="text_submitted" from="TabContainer/TAB_INPUT/InputContainer/Input" to="." method="_on_input_text_submitted"]
+[connection signal="pressed" from="TabContainer/TAB_GROUPED/HBoxContainer/BtnCopyText" to="." method="_on_btn_copy_text_pressed"]
+[connection signal="pressed" from="TabContainer/TAB_GROUPED/HBoxContainer/BtnCopyAll" to="." method="_on_btn_copy_all_pressed"]
 [connection signal="item_selected" from="TabContainer/TAB_SETTINGS/HBoxContainer6/SelectedLanguageButton" to="." method="_on_selected_language_button_item_selected"]
 [connection signal="value_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer/DailyWorkingHours" to="." method="_on_daily_working_hours_value_changed"]
 [connection signal="text_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer2/DateFormat" to="." method="_on_date_format_text_changed"]
