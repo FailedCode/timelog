@@ -10,6 +10,7 @@ class_name Timelog
 
 var timestamp:int = 0
 var text:String = ""
+var previous_timelog:Timelog
 
 func _init(tstamp:int = 0, txt:String = "") -> void:
 	txt = txt.strip_edges()

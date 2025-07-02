@@ -349,6 +349,67 @@ text = "OPEN_USER_FOLDER_BUTTON"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="RowPopupContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RowPopupContainer"]
+layout_mode = 2
+
+[node name="SpacerTop" type="Control" parent="RowPopupContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RowPopupContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TimeStartLineEdit" type="LineEdit" parent="RowPopupContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="RowPopupContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 2
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TimeEndLineEdit" type="LineEdit" parent="RowPopupContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextLineEdit" type="LineEdit" parent="RowPopupContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RowPopupContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SpacerLeft" type="Control" parent="RowPopupContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="popupDone" type="Button" parent="RowPopupContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "done"
+
+[node name="SpacerRight" type="Control" parent="RowPopupContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpacerBottom" type="Control" parent="RowPopupContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
 [connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="timeout" from="SecondTimer" to="." method="_on_second_timer_timeout"]
 [connection signal="pressed" from="TabContainer/TAB_INPUT/DateContainer/DateBackButton" to="." method="_on_date_back_button_pressed"]
@@ -368,3 +429,7 @@ size_flags_horizontal = 3
 [connection signal="color_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer4/PauseColorPicker" to="." method="_on_pause_color_picker_color_changed"]
 [connection signal="toggled" from="TabContainer/TAB_SETTINGS/TabsMoveableToggle" to="." method="_on_tabs_moveable_toggled"]
 [connection signal="pressed" from="TabContainer/TAB_SETTINGS/HBoxContainer5/OpenUserFolderButton" to="." method="_on_open_user_folder_button_pressed"]
+[connection signal="text_submitted" from="RowPopupContainer/VBoxContainer/HBoxContainer/TimeStartLineEdit" to="." method="_on_timelog_edit_submit"]
+[connection signal="text_submitted" from="RowPopupContainer/VBoxContainer/HBoxContainer/TimeEndLineEdit" to="." method="_on_timelog_edit_submit"]
+[connection signal="text_submitted" from="RowPopupContainer/VBoxContainer/TextLineEdit" to="." method="_on_timelog_edit_submit"]
+[connection signal="pressed" from="RowPopupContainer/VBoxContainer/HBoxContainer2/popupDone" to="." method="_on_timelog_edit_submit"]

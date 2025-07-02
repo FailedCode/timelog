@@ -21,6 +21,9 @@ var appSettings:AppSettings
 ## In memory representation of the log
 var timelog:Dictionary
 
+## Records being edited in the popup are stored here
+var popupTimelog:Timelog
+
 ## used to update the TimeDiffLabel
 var lastEntryTimestamp:int = 0
 
@@ -55,6 +58,11 @@ var currentDateTimestamp:int
 @onready var timeColorPicker:ColorPickerButton = %TimeColorPicker
 @onready var pauseColorPicker:ColorPickerButton = %PauseColorPicker
 
+# Popup
+@onready var rowPopupContainer:Container = %RowPopupContainer
+@onready var popupTimeStartLineEdit:LineEdit = %TimeStartLineEdit
+@onready var popupTimeEndLineEdit:LineEdit = %TimeEndLineEdit
+@onready var popupTextLineEdit:LineEdit = %TextLineEdit
 
 func _ready() -> void:
 	appSettings = AppSettings.new()
@@ -205,6 +213,37 @@ func update_text_controls():
 	update_current_timelog()
 	update_grouped_timelog()
 
+## Edit button in a row was clicked, enable popup
+func _on_timelog_edit(timelogResource:Timelog):
+	tabContainer.hide()
+	rowPopupContainer.show()
+	popupTimelog = timelogResource
+	popupTimeStartLineEdit.text = DateTime.timestamp_to_iso8601_string(timelogResource.previous_timelog.timestamp)
+	popupTimeEndLineEdit.text = DateTime.timestamp_to_iso8601_string(timelogResource.timestamp)
+	popupTextLineEdit.text = timelogResource.text
+	popupTextLineEdit.grab_focus()
+	popupTextLineEdit.caret_column = len(popupTextLineEdit.text)
+	popupTextLineEdit.select_all()
+
+## Editing finished, close popup
+func _on_timelog_edit_submit(_newtext:String = ""):
+	tabContainer.show()
+	rowPopupContainer.hide()
+	
+	var starttimestamp:int = DateTime.iso8601_string_to_timestamp(popupTimeStartLineEdit.text.strip_edges())
+	if starttimestamp > 0:
+		popupTimelog.previous_timelog.timestamp = starttimestamp
+	
+	var endtimestamp:int = DateTime.iso8601_string_to_timestamp(popupTimeEndLineEdit.text.strip_edges())
+	if endtimestamp > 0 && endtimestamp > starttimestamp:
+		popupTimelog.timestamp = endtimestamp
+	
+	var newtext:String = popupTextLineEdit.text.strip_edges()
+	if !newtext.is_empty() and popupTimelog.text != newtext:
+		popupTimelog.text = newtext
+
+	update_text_controls()
+
 func update_current_timelog():
 	# empty the container
 	for child in rowContainer.get_children():
@@ -236,7 +275,7 @@ func update_current_timelog():
 		rowContainer.add_child(row)
 		row.set_timelog(DateTime.time_diff(timediff, appSettings.diffSecondsToggle), entry)
 		row.set_colors(colorTime, colorText)
-		row.timelog_changed.connect(update_text_controls)
+		row.popup_open.connect(_on_timelog_edit)
 	
 	# statistics
 	var workTimeLeft = (dailyWorkingHours.value * DateTime.SECONDS_PER_HOUR) - timeWorked
@@ -298,16 +337,21 @@ func auto_day_start():
 
 ## Every day is a entry in the dictionary timelog
 ## the day is an array of Timelog entries
-func add_timelog_entry(tstamp:int, text:String):
-	var key = DateTime.get_date_string(tstamp)
-	var day = timelog.get_or_add(key, [])
-	day.append(Timelog.new(tstamp, text))
+func add_timelog_entry(tstamp:int, text:String) -> Timelog:
+	var key:String = DateTime.get_date_string(tstamp)
+	var day:Array = timelog.get_or_add(key, [])
+	var timelogResource = Timelog.new(tstamp, text)
+	if !day.is_empty() && day.back():
+		timelogResource.previous_timelog = day.back()
+	day.append(timelogResource)
+	return timelogResource
 
 ## Service function
-func add_timelog_entry_now(text:String):
+func add_timelog_entry_now(text:String) -> Timelog:
 	lastEntryTimestamp = DateTime.time()
-	add_timelog_entry(lastEntryTimestamp, text)
+	var timelogResource = add_timelog_entry(lastEntryTimestamp, text)
 	update_text_controls()
+	return timelogResource
 
 ## based on a time stamp, find entries
 ## TODO: "virtual midnight" would need to implemented here as well
