@@ -7,11 +7,15 @@ class_name AppSettings
 # Settings
 ## ID for languageOptions
 var language:int = 0
-var dailyWorkingHours:float = 0
-var dateFormat:String = ""
+var dailyWorkingHours:float = 8
+var dateFormat:String = "%Y-%m-%d (%D)"
 var diffSecondsToggle:bool = false
-var roundingMinutes:int = 0
-var roundingGraceMinutes:int = 0
+var roundingMinutes:int = 15
+var roundingGraceMinutes:int = 5
+
+var colorText:String = "efefef"
+var colorTime:String = "db9200"
+var colorPause:String = "757575"
 
 var window_position:Vector2i = Vector2i(0,0)
 var window_size:Vector2i = Vector2i(0,0)
@@ -30,11 +34,14 @@ func load_from_file(settings_path:String):
 		print("load_from_file ERROR:", error)
 		return
 	language = languageOptions.get(config_file.get_value("main", "language", SYSTEM_LANGUAGE))
-	dailyWorkingHours = config_file.get_value("main", "DailyWorkingHours", 0)		
-	dateFormat = config_file.get_value("main", "DateFormat", "")
-	diffSecondsToggle = config_file.get_value("main", "DiffSecondsToggle", false)
-	roundingMinutes = config_file.get_value("main", "RoundingMinutes", 0)
-	roundingGraceMinutes = config_file.get_value("main", "RoundingGraceMinutes", 0)
+	dailyWorkingHours = config_file.get_value("main", "DailyWorkingHours", dailyWorkingHours)
+	dateFormat = config_file.get_value("main", "DateFormat", dateFormat)
+	diffSecondsToggle = config_file.get_value("main", "DiffSecondsToggle", diffSecondsToggle)
+	roundingMinutes = config_file.get_value("main", "RoundingMinutes", roundingMinutes)
+	roundingGraceMinutes = config_file.get_value("main", "RoundingGraceMinutes", roundingGraceMinutes)
+	colorText = config_file.get_value("main", "colorText", colorText)
+	colorTime = config_file.get_value("main", "colorTime", colorTime)
+	colorPause = config_file.get_value("main", "colorPause", colorPause)
 	
 	window_position.x = config_file.get_value("gfx", "window_position_x", 0)
 	window_position.y = config_file.get_value("gfx", "window_position_y", 0)
@@ -49,6 +56,9 @@ func save_to_file(settings_path:String):
 	config_file.set_value("main", "DiffSecondsToggle", diffSecondsToggle)
 	config_file.set_value("main", "RoundingMinutes", roundingMinutes)
 	config_file.set_value("main", "RoundingGraceMinutes", roundingGraceMinutes)
+	config_file.set_value("main", "colorText", colorText)
+	config_file.set_value("main", "colorTime", colorTime)
+	config_file.set_value("main", "colorPause", colorPause)
 	
 	config_file.set_value("gfx", "window_position_x", window_position.x)
 	config_file.set_value("gfx", "window_position_y", window_position.y)

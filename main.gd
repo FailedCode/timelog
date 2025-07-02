@@ -89,6 +89,10 @@ func load_settings():
 	diffSecondsToggle.button_pressed = appSettings.diffSecondsToggle
 	roundingMinutes.value = appSettings.roundingMinutes
 	roundingGraceMinutes.value = appSettings.roundingGraceMinutes
+	textColorPicker.color = Color(appSettings.colorText)
+	timeColorPicker.color = Color(appSettings.colorTime)
+	pauseColorPicker.color = Color(appSettings.colorPause)
+	
 	# apply settings
 	set_translation(appSettings.getLanugageString())
 	if appSettings.window_size != Vector2i(0,0):
@@ -395,6 +399,21 @@ func _on_rounding_minutes_value_changed(value: float) -> void:
 ## settings change
 func _on_rounding_grace_minutes_value_changed(value: float) -> void:
 	appSettings.roundingGraceMinutes = int(value)
+	update_text_controls()
+
+## settings change
+func _on_text_color_picker_color_changed(color: Color) -> void:
+	appSettings.colorText = color.to_html(false)
+	update_text_controls()
+
+## settings change
+func _on_time_color_picker_color_changed(color: Color) -> void:
+	appSettings.colorTime = color.to_html(false)
+	update_text_controls()
+
+## settings change
+func _on_pause_color_picker_color_changed(color: Color) -> void:
+	appSettings.colorPause = color.to_html(false)
 	update_text_controls()
 
 ## open "user://" to fiddle with the files by hand
