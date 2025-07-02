@@ -49,6 +49,8 @@ var currentDateTimestamp:int
 @onready var dateFormat:LineEdit = %DateFormat
 @onready var dateFormatPreviewLabel:Label = %DateFormatPreviewLabel
 @onready var diffSecondsToggle:CheckButton = %DiffSecondsToggle
+@onready var roundingMinutes:SpinBox = %RoundingMinutes
+@onready var roundingGraceMinutes:SpinBox = %RoundingGraceMinutes
 @onready var textColorPicker:ColorPickerButton = %TextColorPicker
 @onready var timeColorPicker:ColorPickerButton = %TimeColorPicker
 @onready var pauseColorPicker:ColorPickerButton = %PauseColorPicker
@@ -85,6 +87,8 @@ func load_settings():
 	dailyWorkingHours.value = appSettings.dailyWorkingHours
 	dateFormat.text = appSettings.dateFormat
 	diffSecondsToggle.button_pressed = appSettings.diffSecondsToggle
+	roundingMinutes.value = appSettings.roundingMinutes
+	roundingGraceMinutes.value = appSettings.roundingGraceMinutes
 	# apply settings
 	set_translation(appSettings.getLanugageString())
 	if appSettings.window_size != Vector2i(0,0):
@@ -240,11 +244,13 @@ func update_current_timelog():
 	txt += "(%s - %s)" % [wrap_color(startTime, colorTime), wrap_color(stopTime, colorTime)]
 	current.text = txt
 
-
+## Grouped output
+## When switchting tasks back and forth, at the end of the day you still want
+## to enter each in your time sheet / company software
 func update_grouped_timelog():
 	var txt:String = ""
-	var timediff = 0
-	var timelast = 0
+	var timediff:int = 0
+	var timelast:int = 0
 	var colorText:String = textColorPicker.color.to_html()
 	var colorTime:String = timeColorPicker.color.to_html()
 	var groupedDict:Dictionary
@@ -261,8 +267,18 @@ func update_grouped_timelog():
 		var diff:int = groupedDict.get(group[0], 0)
 		groupedDict.set(group[0], diff + timediff)
 	
+	var miniumDiff:int = int(appSettings.roundingMinutes * DateTime.SECONDS_PER_MINUTE)
+	var graceDiff:int = int(appSettings.roundingGraceMinutes * DateTime.SECONDS_PER_MINUTE)
 	for groupText in groupedDict.keys():
 		var groupdiff:int = groupedDict.get(groupText, 0)
+		if miniumDiff > 0:
+			var multiples:int = floor(groupdiff / float(miniumDiff))
+			var rest:int = groupdiff % miniumDiff
+			groupdiff = multiples * miniumDiff
+			if rest > graceDiff:
+				groupdiff += miniumDiff
+			if groupdiff < miniumDiff:
+				groupdiff = miniumDiff
 		txt += wrap_color(DateTime.time_diff(groupdiff, appSettings.diffSecondsToggle), colorTime) + "\t\t" + wrap_color(escape_bb_tags(groupText), colorText) + "\n"
 	grouped.text = txt
 
@@ -354,6 +370,16 @@ func _on_date_format_text_changed(new_text: String) -> void:
 	# Example timestamp: 2025-02-27 14:05:45
 	dateFormatPreviewLabel.text = DateTime.get_date_formated(new_text, 1740661545)
 	dateLabel.text = DateTime.get_date_formated(new_text, currentDateTimestamp)
+
+## settings change
+func _on_rounding_minutes_value_changed(value: float) -> void:
+	appSettings.roundingMinutes = int(value)
+	update_text_controls()
+
+## settings change
+func _on_rounding_grace_minutes_value_changed(value: float) -> void:
+	appSettings.roundingGraceMinutes = int(value)
+	update_text_controls()
 
 ## open "user://" to fiddle with the files by hand
 func _on_open_user_folder_button_pressed() -> void:

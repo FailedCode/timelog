@@ -37,6 +37,16 @@ msgstr ""
 msgid "ROUNDING_LABEL"
 msgstr "Rounding"
 
+msgid "ROUNDING_GRACE_LABEL"
+msgstr "Rounding minimum"
+
+msgid "ROUNDING_GRACE_TOOLTIP"
+msgstr ""
+"Rounding up will only be applied if the rest is above this value\n"
+"e.g. 32 minute task rounded up in 15 minute Intervalls:\n"
+"=> 45 minutes, with a minimum of 0 minutes\n"
+"=> 30 minutes, with a minimum of 5 minutes"
+
 msgid "ROUNDING_SUFFIX"
 msgstr "minutes"
 

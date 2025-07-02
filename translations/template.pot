@@ -19,6 +19,12 @@ msgstr ""
 msgid "ROUNDING_LABEL"
 msgstr ""
 
+msgid "ROUNDING_GRACE_LABEL"
+msgstr ""
+
+msgid "ROUNDING_GRACE_TOOLTIP"
+msgstr ""
+
 msgid "ROUNDING_SUFFIX"
 msgstr ""
 

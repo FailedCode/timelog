@@ -26,14 +26,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 0
+current_tab = 3
 clip_tabs = false
 
 [node name="TAB_INPUT" type="VBoxContainer" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="DateContainer" type="HBoxContainer" parent="TabContainer/TAB_INPUT"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 
 [node name="DateBackButton" type="Button" parent="TabContainer/TAB_INPUT/DateContainer"]
@@ -141,7 +143,6 @@ size_flags_vertical = 3
 auto_tooltip = false
 
 [node name="TAB_SETTINGS" type="VBoxContainer" parent="TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 3
 
@@ -211,10 +212,26 @@ text = "ROUNDING_LABEL"
 vertical_alignment = 1
 
 [node name="RoundingMinutes" type="SpinBox" parent="TabContainer/TAB_SETTINGS/HBoxContainer3"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 60.0
 value = 15.0
+suffix = "m"
+
+[node name="RoundingGraceLabel" type="Label" parent="TabContainer/TAB_SETTINGS/HBoxContainer3"]
+layout_mode = 2
+tooltip_text = "ROUNDING_GRACE_TOOLTIP"
+mouse_filter = 0
+text = "ROUNDING_GRACE_LABEL"
+
+[node name="RoundingGraceMinutes" type="SpinBox" parent="TabContainer/TAB_SETTINGS/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "ROUNDING_GRACE_TOOLTIP"
+max_value = 60.0
+value = 5.0
 suffix = "m"
 
 [node name="DiffSecondsToggle" type="CheckButton" parent="TabContainer/TAB_SETTINGS"]
@@ -299,6 +316,8 @@ size_flags_horizontal = 3
 [connection signal="item_selected" from="TabContainer/TAB_SETTINGS/HBoxContainer6/SelectedLanguageButton" to="." method="_on_selected_language_button_item_selected"]
 [connection signal="value_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer/DailyWorkingHours" to="." method="_on_daily_working_hours_value_changed"]
 [connection signal="text_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer2/DateFormat" to="." method="_on_date_format_text_changed"]
+[connection signal="value_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer3/RoundingMinutes" to="." method="_on_rounding_minutes_value_changed"]
+[connection signal="value_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer3/RoundingGraceMinutes" to="." method="_on_rounding_grace_minutes_value_changed"]
 [connection signal="toggled" from="TabContainer/TAB_SETTINGS/DiffSecondsToggle" to="." method="_on_diff_seconds_toggle_toggled"]
 [connection signal="toggled" from="TabContainer/TAB_SETTINGS/TabsMoveableToggle" to="." method="_on_tabs_moveable_toggled"]
 [connection signal="pressed" from="TabContainer/TAB_SETTINGS/HBoxContainer5/OpenUserFolderButton" to="." method="_on_open_user_folder_button_pressed"]

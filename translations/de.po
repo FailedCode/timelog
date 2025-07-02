@@ -37,6 +37,16 @@ msgstr ""
 msgid "ROUNDING_LABEL"
 msgstr "Runden"
 
+msgid "ROUNDING_GRACE_LABEL"
+msgstr "Runden minimum"
+
+msgid "ROUNDING_GRACE_TOOLTIP"
+msgstr ""
+"Es wird nur dann aufgerunded, wenn der rest über diesem Wert liegt\n"
+"Bsp.: 32 Minuten Task, runden auf 15 Minuten:\n"
+"=> 45 Minuten, mit einem Minimum von 0 Minuten\n"
+"=> 30 Minuten mit einem Minimum von 5 Minuten"
+
 msgid "ROUNDING_SUFFIX"
 msgstr "minuten"
 

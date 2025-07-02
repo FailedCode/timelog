@@ -10,6 +10,8 @@ var language:int = 0
 var dailyWorkingHours:float = 0
 var dateFormat:String = ""
 var diffSecondsToggle:bool = false
+var roundingMinutes:int = 0
+var roundingGraceMinutes:int = 0
 
 var window_position:Vector2i = Vector2i(0,0)
 var window_size:Vector2i = Vector2i(0,0)
@@ -31,6 +33,8 @@ func load_from_file(settings_path:String):
 	dailyWorkingHours = config_file.get_value("main", "DailyWorkingHours", 0)		
 	dateFormat = config_file.get_value("main", "DateFormat", "")
 	diffSecondsToggle = config_file.get_value("main", "DiffSecondsToggle", false)
+	roundingMinutes = config_file.get_value("main", "RoundingMinutes", 0)
+	roundingGraceMinutes = config_file.get_value("main", "RoundingGraceMinutes", 0)
 	
 	window_position.x = config_file.get_value("gfx", "window_position_x", 0)
 	window_position.y = config_file.get_value("gfx", "window_position_y", 0)
@@ -43,6 +47,8 @@ func save_to_file(settings_path:String):
 	config_file.set_value("main", "DailyWorkingHours", dailyWorkingHours)
 	config_file.set_value("main", "DateFormat", dateFormat)
 	config_file.set_value("main", "DiffSecondsToggle", diffSecondsToggle)
+	config_file.set_value("main", "RoundingMinutes", roundingMinutes)
+	config_file.set_value("main", "RoundingGraceMinutes", roundingGraceMinutes)
 	
 	config_file.set_value("gfx", "window_position_x", window_position.x)
 	config_file.set_value("gfx", "window_position_y", window_position.y)
