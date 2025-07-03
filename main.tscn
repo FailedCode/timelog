@@ -325,14 +325,6 @@ flat = true
 color = Color(0.46, 0.46, 0.46, 1)
 edit_alpha = false
 
-[node name="TabsMoveableToggle" type="CheckButton" parent="TabContainer/TAB_SETTINGS"]
-layout_mode = 2
-text = "TABS_MOVEABLE_TOGGLE"
-
-[node name="TabLabelContainer" type="HBoxContainer" parent="TabContainer/TAB_SETTINGS"]
-unique_name_in_owner = true
-layout_mode = 2
-
 [node name="HBoxContainer5" type="HBoxContainer" parent="TabContainer/TAB_SETTINGS"]
 layout_mode = 2
 
@@ -427,7 +419,6 @@ size_flags_vertical = 3
 [connection signal="color_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer4/TextColorPicker" to="." method="_on_text_color_picker_color_changed"]
 [connection signal="color_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer4/TimeColorPicker" to="." method="_on_time_color_picker_color_changed"]
 [connection signal="color_changed" from="TabContainer/TAB_SETTINGS/HBoxContainer4/PauseColorPicker" to="." method="_on_pause_color_picker_color_changed"]
-[connection signal="toggled" from="TabContainer/TAB_SETTINGS/TabsMoveableToggle" to="." method="_on_tabs_moveable_toggled"]
 [connection signal="pressed" from="TabContainer/TAB_SETTINGS/HBoxContainer5/OpenUserFolderButton" to="." method="_on_open_user_folder_button_pressed"]
 [connection signal="text_submitted" from="RowPopupContainer/VBoxContainer/HBoxContainer/TimeStartLineEdit" to="." method="_on_timelog_edit_submit"]
 [connection signal="text_submitted" from="RowPopupContainer/VBoxContainer/HBoxContainer/TimeEndLineEdit" to="." method="_on_timelog_edit_submit"]

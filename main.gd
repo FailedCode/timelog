@@ -46,7 +46,6 @@ var currentDateTimestamp:int
 
 # Settings Tab
 @onready var tabContainer:TabContainer = %TabContainer
-@onready var tabLabelContainer:Node = %TabLabelContainer
 @onready var selectedLanguageButton:OptionButton = %SelectedLanguageButton
 @onready var dateLabel:Label = %DateLabel
 @onready var dateFormat:LineEdit = %DateFormat
@@ -65,11 +64,10 @@ var currentDateTimestamp:int
 @onready var popupTextLineEdit:LineEdit = %TextLineEdit
 
 func _ready() -> void:
-	appSettings = AppSettings.new()
 	currentDateTimestamp = DateTime.time()
+	appSettings = AppSettings.new()
 	create_language_selection()
 	load_settings()
-	create_tab_labels()
 	load_timelog()
 	auto_day_start()
 
@@ -101,8 +99,10 @@ func load_settings():
 	timeColorPicker.color = Color(appSettings.colorTime)
 	pauseColorPicker.color = Color(appSettings.colorPause)
 	
-	# apply settings
+	# apply language settings
 	set_translation(appSettings.getLanugageString())
+	
+	# resize and reposition window
 	if appSettings.window_size != Vector2i(0,0):
 		get_window().size = appSettings.window_size
 	if appSettings.window_position != Vector2i(0,0):
@@ -133,17 +133,6 @@ func create_language_selection():
 		appSettings.languageOptions.set(locale, id) # needed for setting the right ID when loading settings
 		selectedLanguageButton.add_item(tr(locale.to_upper() + "_LANGUAGE"), id)
 		id += 1
-
-## Helper function to create text input for every Tab
-## Adds the Tab node to the signal, so one general handler function can be reused
-func create_tab_labels():
-	# create input label for each tab
-	for tab in tabContainer.get_children():
-		var tabLabel = LineEdit.new()
-		tabLabel.placeholder_text = tab.name
-		tabLabel.size_flags_horizontal = Control.SIZE_FILL + Control.SIZE_EXPAND
-		tabLabel.text_changed.connect(_on_tabLabel_changed.bind(tab, tabLabel))
-		tabLabelContainer.add_child(tabLabel)
 
 ## After loading or when changing language, there are texts that need
 ## to be updated
@@ -411,22 +400,9 @@ func _on_daily_working_hours_value_changed(value: float) -> void:
 		dailyWorkingHours.modulate = Color(1, 1, 1) 
 
 ## settings change
-## The tabs can't have no name, so fall back on the placeholder
-func _on_tabLabel_changed(new_text:String, tab:Node, tabLabel:Node) -> void:
-	if new_text.strip_edges().is_empty():
-		new_text = tabLabel.placeholder_text
-	tab.name = new_text
-	# TODO: appSettings.
-
-## settings change
 func _on_diff_seconds_toggle_toggled(toggled_on: bool) -> void:
 	appSettings.diffSecondsToggle = toggled_on
 	update_text_controls()
-
-## settings change
-func _on_tabs_moveable_toggled(toggled_on: bool) -> void:
-	# TODO: appSettings.
-	tabContainer.drag_to_rearrange_enabled = toggled_on
 
 ## settings change
 func _on_date_format_text_changed(new_text: String) -> void:
