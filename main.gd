@@ -103,9 +103,12 @@ func load_settings():
 	set_translation(appSettings.getLanugageString())
 	
 	# resize and reposition window
-	if appSettings.window_size != Vector2i(0,0):
+	# if screen is -1 here, there window position is somewhere outside the screen and impossible
+	# for the user to reach
+	var screen:int = DisplayServer.get_screen_from_rect(Rect2(appSettings.window_position, appSettings.window_size))
+	if screen != -1 and appSettings.window_size != Vector2i(0,0):
 		get_window().size = appSettings.window_size
-	if appSettings.window_position != Vector2i(0,0):
+	if screen != -1 and appSettings.window_position != Vector2i(0,0):
 		get_window().position = appSettings.window_position
 
 func save_settings():
