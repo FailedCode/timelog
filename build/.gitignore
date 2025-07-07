@@ -2,3 +2,4 @@
 # these should never be commited.
 *
 !.gitignore
+!minimal_godot_profile.py
