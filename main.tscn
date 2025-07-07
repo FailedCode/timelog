@@ -173,7 +173,7 @@ metadata/_tab_index = 2
 
 [node name="Button" type="Button" parent="TabContainer/TAB_TODO"]
 layout_mode = 2
-text = "+"
+text = "~ This feature is not yet available ~"
 
 [node name="TodoTree" type="Tree" parent="TabContainer/TAB_TODO"]
 unique_name_in_owner = true

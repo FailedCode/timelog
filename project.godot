@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Timelog"
 config/description="TimeLog is a simple app for keeping track of time."
-config/version="1.0.0"
+config/version="0.8.0"
 run/main_scene="uid://dh658r8myl8sb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 boot_splash/show_image=false
